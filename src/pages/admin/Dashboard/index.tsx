@@ -1,7 +1,4 @@
-import { Box, Flex, SimpleGrid, Text } from "@chakra-ui/react"
-
-import { Header } from "../../../components/Header"
-import { Sidebar } from "../../../components/Sidebar"
+import { Box, SimpleGrid, Text } from "@chakra-ui/react"
 
 import Charts from "react-apexcharts"
 import { theme } from "../../../styles/theme"
@@ -15,7 +12,7 @@ const options = {
     zoom: {
       enabled: false,
     },
-    foreColor: theme.colors.gray[500],
+    foreColor: theme.colors.gray[600],
   },
   grid: {
     show: false,
@@ -48,43 +45,20 @@ const options = {
 
 function Dashboard() {
   return (
-    <Flex direction="column" height="100vh">
-      <Header />
-
-      <Flex width="100%" my="6" maxWidth={1488} mx="auto" px="6">
-        <Sidebar />
-
-        <SimpleGrid
-          flex="1"
-          gap="4"
-          minChildWidth="320px"
-          alignItems="flex-start"
-        >
-          <Box p="8" bg="gray.800" borderRadius={8} pb="4">
-            <Text fontSize="lg" mb="4">
-              Inscritos da semana
-            </Text>
-            <Charts
-              options={options}
-              series={series}
-              type="area"
-              height={160}
-            />
-          </Box>
-          <Box p="8" bg="gray.800" borderRadius={8} pb="4">
-            <Text fontSize="lg" mb="4">
-              Taxa de abertura
-            </Text>
-            <Charts
-              options={options}
-              series={series}
-              type="area"
-              height={160}
-            />
-          </Box>
-        </SimpleGrid>
-      </Flex>
-    </Flex>
+    <SimpleGrid flex="1" gap="4" minChildWidth="320px" alignItems="flex-start">
+      <Box p={["6", "8"]} bg="background.50" borderRadius={8} pb="4">
+        <Text fontSize="lg" mb="4">
+          Saída de produtos
+        </Text>
+        <Charts options={options} series={series} type="area" height={160} />
+      </Box>
+      <Box p={["6", "8"]} bg="background.50" borderRadius={8} pb="4">
+        <Text fontSize="lg" mb="4">
+          Entrada de produtos
+        </Text>
+        <Charts options={options} series={series} type="area" height={160} />
+      </Box>
+    </SimpleGrid>
   )
 }
 
