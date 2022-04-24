@@ -13,6 +13,7 @@ interface InputProps extends ChakraInputProps {
 
 export function Input({
   name,
+  title,
   iconLeft: IconLeft,
   iconRight: IconRight,
   size = "lg",
@@ -25,16 +26,13 @@ export function Input({
           <InputLeftElement pointerEvents="none" children={<IconLeft />} />
         )}
         <ChakraInput
-          name={name}
-          color="font"
-          bgColor="background.200"
-          _focus={{
-            backgroundColor: "background.50",
-            transition: 0.8,
-          }}
-          variant="outline"
           id={name}
-          size={size}
+          name={name}
+          placeholder={title}
+          focusBorderColor={"primary"}
+          bgColor="background.100"
+          variant="filled"
+          size="lg"
           {...props}
         />
         {IconRight && (

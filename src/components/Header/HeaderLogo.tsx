@@ -1,18 +1,23 @@
 import { Text, Box } from "@chakra-ui/react"
 
-export function HeaderLogo() {
+interface IHeaderLogo {
+  size?: string
+}
+
+export function HeaderLogo({ size = "3xl" }: IHeaderLogo) {
   return (
     <Box mx="2" minWidth={100}>
       <Text
-        fontSize={["2xl", "3xl"]}
+        fontSize={["2xl", size]}
         fontWeight="bold"
         letterSpacing="tight"
         width="64"
       >
-        Store
+        Stock
         <Text as="span" ml="1" color="primary">
           .
         </Text>
+        on
       </Text>
     </Box>
   )

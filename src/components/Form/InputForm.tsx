@@ -22,17 +22,16 @@ export function InputForm({
   ...props
 }: InputProps) {
   const { name } = field
-  const { touched: touchedEvent, errors } = form
+  const { errors } = form
 
   const error = getIn(errors, name)
-  const touched = getIn(touchedEvent, name)
 
   const titleValidated = useMemo(() => {
     return !required ? title : title.concat(" *")
   }, [title, required])
 
   return (
-    <FormControl isInvalid={!!error && !!touched}>
+    <FormControl isInvalid={!!error}>
       <ChakraInput
         id={name}
         name={name}
