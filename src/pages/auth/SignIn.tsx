@@ -9,13 +9,12 @@ import { FcGoogle } from "react-icons/fc"
 import { HeaderLogo } from "../../components/Header/HeaderLogo"
 import { Link, useNavigate } from "react-router-dom"
 
-export const SignIn: React.FC = () => {
-  const { signInWithGoogle, signInWithCredentials } = useAuth()
+export const SignIn = () => {
+  const { signInWithGoogle, setDataBase, useMutationSignInWithCredentials } =
+    useAuth()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
-  console.log(email, password)
 
   const navigate = useNavigate()
 
@@ -23,11 +22,17 @@ export const SignIn: React.FC = () => {
     signInWithGoogle().then(() => navigate("/dashboard"))
   }
 
+  const { mutate } = useMutationSignInWithCredentials(
+    { email, password },
+    { onError: (err) => console.log(err) }
+  )
+
   const onSubmit = (e) => {
     e.preventDefault()
 
     if (email && password) {
-      signInWithCredentials(email, password)
+      mutate()
+      setDataBase()
     }
   }
 
@@ -42,6 +47,9 @@ export const SignIn: React.FC = () => {
       <Flex textAlign="center" mb="8">
         <HeaderLogo size="4xl" />
       </Flex>
+
+      {}
+
       <Flex
         as="form"
         width="100%"
@@ -77,13 +85,7 @@ export const SignIn: React.FC = () => {
           />
         </Stack>
 
-        <Button
-          type="submit"
-          mt="6"
-          colorScheme="blue"
-          size="lg"
-          onClick={onSubmit}
-        >
+        <Button mt="6" colorScheme="blue" size="lg" onClick={onSubmit}>
           Entrar
         </Button>
 

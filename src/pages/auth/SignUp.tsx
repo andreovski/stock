@@ -54,9 +54,9 @@ export const SignUp: React.FC = () => {
 
   const onSubmit = useCallback(
     (values, formik) => {
-      createAccount({ email: values.email, password: values.password }).finally(
-        () => navigate("/")
-      )
+      createAccount({ email: values.email, password: values.password })
+        .then(() => formik.setSubmitting(false))
+        .finally(() => navigate("/"))
     },
     [navigate, createAccount]
   )

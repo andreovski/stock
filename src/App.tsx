@@ -1,16 +1,25 @@
-import { ChakraProvider } from "@chakra-ui/react"
-import { theme } from "./styles/theme"
+import { Suspense, useMemo } from "react"
+import { useAuth } from "./context/AuthContext"
+import AppRoutes from "./routes/AppRoutes"
+import AuthRoutes from "./routes/AuthRoutes"
 
-import Routes from "./routes"
-import { AuthProvider } from "./context/AuthContext"
+import { SpinnerFull } from "./components/SpinnerFull"
 
 function App() {
+  const { isAuthenticated } = useAuth()
+
+  const Component = useMemo(() => {
+    if (isAuthenticated) {
+      return AppRoutes
+    }
+
+    return AuthRoutes
+  }, [isAuthenticated])
+
   return (
-    <ChakraProvider theme={theme}>
-      <AuthProvider>
-        <Routes />
-      </AuthProvider>
-    </ChakraProvider>
+    <Suspense fallback={<SpinnerFull size="lg" />}>
+      <Component />
+    </Suspense>
   )
 }
 
