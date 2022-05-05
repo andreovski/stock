@@ -1,8 +1,20 @@
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 
-import { Button, Flex, Link as ChakraLink, Stack, Text } from "@chakra-ui/react"
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Box,
+  Button,
+  Flex,
+  Link as ChakraLink,
+  Stack,
+  Text,
+} from "@chakra-ui/react"
 
 import { useAuth } from "../../context/AuthContext"
+
+import { useMutationSignInWithCredentials } from "../../services/api"
 
 import { Input } from "../../components/Form/Input"
 import { FcGoogle } from "react-icons/fc"
@@ -10,11 +22,12 @@ import { HeaderLogo } from "../../components/Header/HeaderLogo"
 import { Link, useNavigate } from "react-router-dom"
 
 export const SignIn = () => {
-  const { signInWithGoogle, setDataBase, useMutationSignInWithCredentials } =
-    useAuth()
+  const { signInWithGoogle, signInWithCredetials } = useAuth()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  const [error, setError] = useState()
 
   const navigate = useNavigate()
 
@@ -22,19 +35,39 @@ export const SignIn = () => {
     signInWithGoogle().then(() => navigate("/dashboard"))
   }
 
-  const { mutate } = useMutationSignInWithCredentials(
-    { email, password },
-    { onError: (err) => console.log(err) }
+  const { mutate: signIn, isLoading } = useMutationSignInWithCredentials(
+    {},
+    {
+      onError: ({ error }: any) => setError(error.message),
+      onSuccess: (data) => {
+        signInWithCredetials(data)
+
+        setError(null)
+        navigate("/dashboard")
+        console.log(data)
+      },
+    }
   )
 
-  const onSubmit = (e) => {
-    e.preventDefault()
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault()
 
-    if (email && password) {
-      mutate()
-      setDataBase()
-    }
-  }
+      if (email && password) {
+        signIn([{ email, password }])
+      }
+    },
+    [email, password, signIn]
+  )
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.keyCode === 13) {
+        onSubmit(e)
+      }
+    },
+    [onSubmit]
+  )
 
   return (
     <Flex
@@ -48,10 +81,22 @@ export const SignIn = () => {
         <HeaderLogo size="4xl" />
       </Flex>
 
-      {}
+      {error && (
+        <Flex mb={2}>
+          <Alert status="warning" borderRadius={6}>
+            <AlertIcon mr="6" />
+            <Box>
+              <AlertDescription>
+                <Text>{`E-mail e/ou senha inválido.`}</Text>
+              </AlertDescription>
+            </Box>
+          </Alert>
+        </Flex>
+      )}
 
       <Flex
         as="form"
+        onKeyDown={handleKeyDown}
         width="100%"
         maxW={360}
         bg="background.50"
@@ -85,7 +130,14 @@ export const SignIn = () => {
           />
         </Stack>
 
-        <Button mt="6" colorScheme="blue" size="lg" onClick={onSubmit}>
+        <Button
+          mt="6"
+          size="lg"
+          isLoading={isLoading}
+          loadingText="Entrando"
+          colorScheme="blue"
+          onClick={onSubmit}
+        >
           Entrar
         </Button>
 

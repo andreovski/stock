@@ -12,24 +12,41 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react"
-
-import { useAuth } from "../../context/AuthContext"
 
 import { HeaderLogo } from "../../components/Header/HeaderLogo"
 import { useNavigate } from "react-router-dom"
-import { Field, Form, Formik } from "formik"
+import { Field, Form, Formik, FormikBag } from "formik"
 
 import { InputForm } from "../../components/Form/InputForm"
 
 import * as Yup from "yup"
 import { RiArrowLeftLine } from "react-icons/ri"
+import { useMutationSignUp } from "../../services/api"
+import { SectionTitle } from "../../components/SectionTitle"
 
 export const SignUp: React.FC = () => {
   const navigate = useNavigate()
-  const { createAccount } = useAuth()
+  const snackbar = useToast()
 
   const invalidPassword = "A senha não atende as exigências!"
+
+  const { mutate: createAccount } = useMutationSignUp(
+    {},
+    {
+      onSuccess: () => {
+        snackbar({
+          title: "Conta criada com sucesso!",
+          status: "success",
+          description:
+            "Você já pode logar em sua conta usando suas credenciais.",
+        })
+
+        setTimeout(() => navigate("/"), 1200)
+      },
+    }
+  )
 
   const validationSchema = useMemo(() => {
     return Yup.object({
@@ -48,17 +65,27 @@ export const SignUp: React.FC = () => {
     })
   }, [])
 
-  const warningPasswordMessage = (error) => {
+  const warningPasswordMessage = (error): boolean => {
     return (error?.password || "").includes(invalidPassword)
   }
 
   const onSubmit = useCallback(
-    (values, formik) => {
-      createAccount({ email: values.email, password: values.password })
-        .then(() => formik.setSubmitting(false))
-        .finally(() => navigate("/"))
+    (values, formik: FormikBag<any, any>) => {
+      createAccount([{ email: values.email, password: values.password }], {
+        onSettled: () => {
+          formik.setSubmitting(false)
+        },
+        onError: ({ error }: any) => {
+          if (error.message === "EMAIL_EXISTS") {
+            formik.setFieldError(
+              "email",
+              "Já existe uma conta registrada para esse e-mail."
+            )
+          }
+        },
+      })
     },
-    [navigate, createAccount]
+    [createAccount]
   )
 
   return (
@@ -89,11 +116,14 @@ export const SignUp: React.FC = () => {
           {({ isSubmitting, errors }) => {
             return (
               <Form noValidate>
+                <SectionTitle title="Dados de acesso" mt={0} />
+
                 <Stack spacing={4} minWidth={200}>
                   <Field
                     name="email"
                     type="email"
                     title="E-mail"
+                    validateFieldIndicator
                     component={InputForm}
                   />
 
@@ -102,12 +132,14 @@ export const SignUp: React.FC = () => {
                       name="password"
                       type="password"
                       title="Senha"
+                      validateFieldIndicator
                       component={InputForm}
                     />
                     <Field
                       name="confirm_password"
                       type="password"
                       title="Confirme sua senha"
+                      validateFieldIndicator
                       component={InputForm}
                     />
                   </SimpleGrid>
@@ -145,6 +177,7 @@ export const SignUp: React.FC = () => {
                     colorScheme="blue"
                     size="lg"
                     isLoading={isSubmitting}
+                    loadingText="Criando sua conta"
                     isDisabled={isSubmitting}
                     isFullWidth
                   >
