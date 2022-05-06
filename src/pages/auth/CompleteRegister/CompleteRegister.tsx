@@ -6,13 +6,7 @@ import { SectionTitle } from "../../../components/SectionTitle"
 import { AvatarField } from "../../../components/AvatarField"
 
 export const CompleteRegister = () => {
-  const onSubmit = (values) => {
-    // const file = values.avatar
-    // //eslint-disable-next-line
-    // file instanceof Blob
-    // console.log(values)
-    // uploadBytes(storageRef, file).then(() => alert("SUCESSO"))
-  }
+  const onSubmit = (values) => {}
 
   return (
     <Flex

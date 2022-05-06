@@ -71,19 +71,22 @@ export const SignUp: React.FC = () => {
 
   const onSubmit = useCallback(
     (values, formik: FormikBag<any, any>) => {
-      createAccount([{ email: values.email, password: values.password }], {
-        onSettled: () => {
-          formik.setSubmitting(false)
-        },
-        onError: ({ error }: any) => {
-          if (error.message === "EMAIL_EXISTS") {
-            formik.setFieldError(
-              "email",
-              "Já existe uma conta registrada para esse e-mail."
-            )
-          }
-        },
-      })
+      createAccount(
+        { email: values.email, password: values.password },
+        {
+          onSettled: () => {
+            formik.setSubmitting(false)
+          },
+          onError: ({ error }: any) => {
+            if (error.message === "EMAIL_EXISTS") {
+              formik.setFieldError(
+                "email",
+                "Já existe uma conta registrada para esse e-mail."
+              )
+            }
+          },
+        }
+      )
     },
     [createAccount]
   )

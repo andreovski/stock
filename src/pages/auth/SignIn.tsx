@@ -14,7 +14,10 @@ import {
 
 import { useAuth } from "../../context/AuthContext"
 
-import { useMutationSignInWithCredentials } from "../../services/api"
+import {
+  useMutationSignInWithCredentials,
+  useQueryGetDocumentById,
+} from "../../services/api"
 
 import { Input } from "../../components/Form/Input"
 import { FcGoogle } from "react-icons/fc"
@@ -54,7 +57,7 @@ export const SignIn = () => {
       e.preventDefault()
 
       if (email && password) {
-        signIn([{ email, password }])
+        signIn({ email, password })
       }
     },
     [email, password, signIn]
@@ -68,6 +71,12 @@ export const SignIn = () => {
     },
     [onSubmit]
   )
+
+  const { data } = useQueryGetDocumentById({
+    id: "gjR9jy2icpfoFmYXT5lK",
+  })
+
+  console.log(data)
 
   return (
     <Flex
