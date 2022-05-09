@@ -1,14 +1,17 @@
 import {
+  Icon,
   Input as ChakraInput,
   InputGroup,
   InputLeftElement,
   InputProps as ChakraInputProps,
+  InputRightElement,
   Stack,
 } from "@chakra-ui/react"
+import { ElementType } from "react"
 
 interface InputProps extends ChakraInputProps {
-  iconLeft?: React.FC
-  iconRight?: React.FC
+  iconLeft?: ElementType
+  iconRight?: ElementType
 }
 
 export function Input({
@@ -23,7 +26,10 @@ export function Input({
     <Stack spacing={4}>
       <InputGroup>
         {IconLeft && (
-          <InputLeftElement pointerEvents="none" children={<IconLeft />} />
+          <InputLeftElement
+            pointerEvents="none"
+            children={<Icon as={IconRight} mt={2} mr={2} fontSize="22" />}
+          />
         )}
         <ChakraInput
           id={name}
@@ -36,7 +42,10 @@ export function Input({
           {...props}
         />
         {IconRight && (
-          <InputLeftElement pointerEvents="none" children={<IconRight />} />
+          <InputRightElement
+            pointerEvents="none"
+            children={<Icon as={IconRight} mt={2} mr={2} fontSize="22" />}
+          />
         )}
       </InputGroup>
     </Stack>
